@@ -1,0 +1,6 @@
+[
+  { "title": "Локализация игры", "status": "done" },
+  { "title": "Фикс Багов", "status": "work" },
+  { "title": "Сюжет в игре", "status": "todo" },
+  { "title": "Музыка и UI", "status": "work" }
+]

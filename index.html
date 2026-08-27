@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godot PS1 Horror - DevLog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <h1 class="fade-in">DevLog: PS1 Horror Game</h1>
+            <p class="fade-in-delay">Привет! Тут вы узнаете, что уже реализовано в моей игре в стиле PS1 хоррор на Godot 4.7, а что находится в разработке.</p>
+        </header>
+
+        <main class="tasks-panel fade-in-delay-2">
+            <h2>Статус разработки</h2>
+            <div id="tasks-container" class="tasks-grid"></div>
+        </main>
+    </div>
+
+    <script>
+        fetch('tasks.json')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('tasks-container');
+                data.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = `task-card status-${item.status}`;
+                    card.style.animationDelay = `${(index + 3) * 0.15}s`;
+                    
+                    let icon = '❌';
+                    let statusText = 'Не реализовано';
+                    
+                    if (item.status === 'done') {
+                        icon = '✅';
+                        statusText = 'Уже в игре';
+                    } else if (item.status === 'work') {
+                        icon = '⚙️';
+                        statusText = 'В работе';
+                    }
+
+                    card.innerHTML = `
+                        <div class="icon">${icon}</div>
+                        <div class="info">
+                            <h3>${item.title}</h3>
+                            <span>${statusText}</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            });
+    </script>
+</body>
+</html>
