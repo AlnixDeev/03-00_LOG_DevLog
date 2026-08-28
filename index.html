@@ -1,43 +1,156 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project_DevLog</title>
+    <title>SYSTEM_03:00_TERMINAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="crt">
+    <div class="crt-overlay"></div>
+    <div class="scanline"></div>
+
     <div class="container">
-        <header class="hero">
-            <h1 class="fade-in">DevLog: Cycle 03:00</h1>
-            <p class="fade-in-delay">Here you will find out what has already been implemented and what is currently under development.</p>
+        <header class="hero win-box">
+            <div class="win-titlebar">
+                <span>SYSTEM_STATUS.EXE</span>
+                <span class="win-controls">[X]</span>
+            </div>
+            <div class="win-content">
+                <h1 class="glitch" data-text="DevLog: Cycle 03:00">DevLog: Cycle 03:00</h1>
+                <p>> Initializing ERCYCLE_OS_v1.0...</p>
+                <p>> Status: Online. Tracking core progress.</p>
+                
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>[MEMORY_LOAD]</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <main class="tasks-panel fade-in-delay-2">
-            <h2>Статус разработки</h2>
-            <div id="tasks-container" class="tasks-grid"></div>
+        <main class="tasks-panel win-box">
+            <div class="win-titlebar">
+                <span>TASKS_MANAGER.DAT</span>
+                <span class="win-controls">[-]</span>
+            </div>
+            <div class="win-content">
+                <h2>> DEVELOPMENT_STATUS</h2>
+                <div id="tasks-container" class="tasks-grid"></div>
+            </div>
         </main>
+
+        <section class="about-card win-box">
+            <div class="win-titlebar">
+                <span>README.TXT</span>
+                <span class="win-controls">[?]</span>
+            </div>
+            <div class="about-overlay win-content">
+                <h2>> ATMOSPHERE AND DETAILS</h2>
+                <p>Immerse yourself in the classic PS1-style horror atmosphere. This small horror project is in active development. Release dates for Game Jolt and Itch.io will be announced here.</p>
+            </div>
+        </section>
+
+        <section class="screenshots-section win-box">
+            <div class="win-titlebar">
+                <span>SCREENSHOTS_PANEL.RAW</span>
+                <span class="win-controls">[O]</span>
+            </div>
+            <div class="win-content">
+                <h2>> SCR_PANEL</h2>
+                <div class="crt-grid">
+                    <div class="crt-card">
+                        <img src="images/screen1.png" alt="Game Screenshot 1">
+                    </div>
+                    <div class="crt-card">
+                        <img src="images/screen2.png" alt="Game Screenshot 2">
+                    </div>
+                    <div class="crt-card">
+                        <img src="images/screen3.png" alt="Game Screenshot 3">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="links-section">
+            <a href="https://t.me/AlnixDev" target="_blank" class="retro-btn tg-btn">
+                <span>> TELEGRAM_CHANNEL</span>
+            </a>
+
+            <a href="https://alnix-dev.itch.io/" target="_blank" class="retro-btn itch-btn">
+                <span>> ITCH.IO_PAGE</span>
+            </a>
+        </div>
     </div>
 
     <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playRetroSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'todo') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.setValueAtTime(80, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'work') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'done') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
         fetch('tasks.json')
             .then(res => res.json())
             .then(data => {
                 const container = document.getElementById('tasks-container');
-                data.forEach((item, index) => {
+                let doneCount = 0;
+
+                data.forEach((item) => {
+                    if (item.status === 'done') doneCount++;
+
                     const card = document.createElement('div');
                     card.className = `task-card status-${item.status}`;
-                    card.style.animationDelay = `${(index + 3) * 0.15}s`;
                     
-                    let icon = '❌';
-                    let statusText = 'Not implemented';
+                    let icon = '[X]';
+                    let statusText = 'NOT_IMPLEMENTED';
                     
                     if (item.status === 'done') {
-                        icon = '✅';
-                        statusText = 'Ready!';
+                        icon = '[OK]';
+                        statusText = 'READY!';
                     } else if (item.status === 'work') {
-                        icon = '⚙️';
-                        statusText = 'In progress';
+                        icon = '[~]';
+                        statusText = 'IN_PROGRESS';
                     }
 
                     card.innerHTML = `
@@ -47,8 +160,25 @@
                             <span>${statusText}</span>
                         </div>
                     `;
+
+                    card.addEventListener('click', () => {
+                        if (card.classList.contains('animating')) return;
+
+                        const animClass = `anim-${item.status}`;
+                        card.classList.add('animating', animClass);
+                        playRetroSound(item.status);
+
+                        setTimeout(() => {
+                            card.classList.remove('animating', animClass);
+                        }, 500);
+                    });
+
                     container.appendChild(card);
                 });
+
+                const percent = Math.round((doneCount / data.length) * 100) || 0;
+                document.getElementById('progress-percent').innerText = `${percent}%`;
+                document.getElementById('progress-bar-fill').style.width = `${percent}%`;
             });
     </script>
 </body>

@@ -1,6 +1,7 @@
 [
-  { "title": "Локализация игры", "status": "done" },
-  { "title": "Фикс Багов", "status": "work" },
-  { "title": "Сюжет в игре", "status": "todo" },
-  { "title": "Музыка и UI", "status": "work" }
+  { "title": "Game localization", "status": "done" },
+  { "title": "Bug Fix", "status": "work" },
+  { "title": "The plot of the game", "status": "todo" },
+  { "title": "Music and UI", "status": "work" },
+  { "title": "Quests & Daily Mode", "status": "work" }
 ]
